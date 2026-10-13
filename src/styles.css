@@ -1,0 +1,16 @@
+/* Basic responsive styles for the minimal prototype */
+:root{
+  --bg:#e6f7ff;
+  --panel:rgba(255,255,255,0.9);
+}
+body,html,#root{height:100%;margin:0;font-family:Inter, ui-sans-serif, system-ui}
+.app-root{height:100%;display:flex;flex-direction:column}
+.main-menu{padding:8px;background:linear-gradient(90deg,#8ad0ff,#7bd389);display:flex;align-items:center;gap:12px}
+.game-area{flex:1;position:relative}
+.hud{position:fixed;top:12px;left:12px;background:var(--panel);padding:8px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.15)}
+.modal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.4)}
+.modal-content{background:white;padding:16px;border-radius:8px;max-width:520px;width:90%}
+button{cursor:pointer}
+@media (max-width:600px){
+  .hud{left:8px;right:8px;display:flex;justify-content:space-between}
+}
