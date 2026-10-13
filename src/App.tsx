@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
 import GameScene from './game/GameScene'
 import HUD from './ui/HUD'
+import CharacterGallery from './ui/CharacterGallery'
 import { getRank, loadProgress, resetProgress, saveProgress, type Progress } from './utils/save'
 
 type Activity = 'math' | 'ai' | null
-type Panel = 'map' | 'install' | null
+type Panel = 'map' | 'install' | 'customize' | null
 const worlds = [
   { name: 'Wonder Meadow', tone: 'meadow', state: 'available', detail: 'Explore, collect, and meet Zuno.' },
   { name: 'Numberland', tone: 'number', state: 'locked', detail: 'Unlock after 3 completed missions.' },
@@ -45,24 +46,25 @@ export default function App() {
   const install = async () => { if (!installEvent) return; await installEvent.prompt(); setInstallEvent(null) }
 
   return <div className="app-root">
-    <GameScene paused={paused || showMenu || Boolean(activity || panel)} onCollectStar={collectStar} onStartMath={() => openActivity('math')} onStartAI={() => openActivity('ai')} />
+    <GameScene paused={paused || showMenu || Boolean(activity || panel)} zuno={progress.zuno} onCollectStar={collectStar} onStartMath={() => openActivity('math')} onStartAI={() => openActivity('ai')} />
     <div className="vignette" aria-hidden="true" />
     <header className="brand-bar"><div className="brand-mark"><span className="brand-orb">✦</span><div><strong>WondoVerse</strong><small>Play. Discover. Create AI.</small></div></div>{!showMenu && <button className="icon-button" onClick={() => setPaused((value) => !value)} aria-label={paused ? 'Resume game' : 'Pause game'}>{paused ? '▶' : 'Ⅱ'}</button>}</header>
-    {!showMenu && <HUD progress={progress} paused={paused} onTogglePause={() => setPaused((value) => !value)} onOpenMap={() => { setPanel('map'); setPaused(true) }} />}
+    {!showMenu && <HUD progress={progress} paused={paused} onTogglePause={() => setPaused((value) => !value)} onOpenMap={() => { setPanel('map'); setPaused(true) }} onOpenCharacter={() => { setPanel('customize'); setPaused(true) }} />}
     {!showMenu && <TouchControls />}
-    {showMenu && <MainMenu progress={progress} onStart={startAdventure} onOpenMap={() => setPanel('map')} onOpenInstall={() => setPanel('install')} />}
+    {showMenu && <MainMenu progress={progress} onStart={startAdventure} onOpenMap={() => setPanel('map')} onOpenInstall={() => setPanel('install')} onOpenCharacter={() => setPanel('customize')} />}
     {!showMenu && paused && !activity && !panel && <PausePanel onResume={() => setPaused(false)} onRestart={() => { setProgress(resetProgress()); setPaused(false) }} />}
     {activity === 'math' && <MathActivity onClose={closeActivity} onComplete={completeMath} />}
     {activity === 'ai' && <AIActivity onClose={closeActivity} onComplete={completeAI} completed={progress.aiMissionComplete} />}
     {panel === 'map' && <WorldMap progress={progress} onClose={() => { setPanel(null); setPaused(false) }} />}
     {panel === 'install' && <InstallPanel canInstall={Boolean(installEvent)} onInstall={install} onClose={() => setPanel(null)} />}
+    {panel === 'customize' && <CharacterGallery value={progress.zuno} xp={progress.xp} onChange={(zuno) => setProgress((current) => ({ ...current, zuno }))} onClose={() => { setPanel(null); setPaused(false) }} />}
     {!showMenu && <button className="install-chip" onClick={() => setPanel('install')} aria-label="Install WondoVerse">Install game</button>}
   </div>
 }
 
-type MenuProps = { progress: Progress; onStart: () => void; onOpenMap: () => void; onOpenInstall: () => void }
-function MainMenu({ progress, onStart, onOpenMap, onOpenInstall }: MenuProps) {
-  return <main className="menu-screen"><div className="menu-card"><div className="menu-kicker">THE GREAT LEARNING ADVENTURE</div><h1>Wondo<span>Verse</span></h1><p className="tagline">A living world where curiosity becomes capability.</p><div className="wondo-avatar" aria-label="Zuno the AI learning companion"><div className="avatar-antenna">✦</div><div className="avatar-face"><i /><i /></div><div className="avatar-smile">⌣</div><span className="avatar-badge">ZUNO</span></div><p className="welcome">Meet Zuno, your curious companion. Explore Wonder Meadow, collect stars, and teach a tiny model how to recognise patterns.</p><div className="menu-actions"><button className="primary-button" onClick={onStart}>{progress.xp ? 'Continue adventure' : 'Begin adventure'} <span>→</span></button><button className="secondary-button" onClick={onOpenMap}>View world map</button></div><div className="menu-meta"><span>{getRank(progress.xp)}</span><span>{progress.xp} XP</span><button onClick={onOpenInstall}>Install to device</button></div></div></main>
+type MenuProps = { progress: Progress; onStart: () => void; onOpenMap: () => void; onOpenInstall: () => void; onOpenCharacter: () => void }
+function MainMenu({ progress, onStart, onOpenMap, onOpenInstall, onOpenCharacter }: MenuProps) {
+  return <main className="menu-screen"><div className="menu-card"><div className="menu-kicker">THE GREAT LEARNING ADVENTURE</div><h1>Wondo<span>Verse</span></h1><p className="tagline">A living world where curiosity becomes capability.</p><div className="wondo-avatar" aria-label="Zuno the AI learning companion"><div className="avatar-antenna">✦</div><div className="avatar-face"><i /><i /></div><div className="avatar-smile">⌣</div><span className="avatar-badge">ZUNO</span></div><p className="welcome">Meet Zuno, your curious companion. Explore Wonder Meadow, collect stars, and teach a tiny model how to recognise patterns.</p><div className="menu-actions"><button className="primary-button" onClick={onStart}>{progress.xp ? 'Continue adventure' : 'Begin adventure'} <span>→</span></button><button className="secondary-button" onClick={onOpenMap}>View world map</button><button className="secondary-button" onClick={onOpenCharacter}>Style Zuno</button></div><div className="menu-meta"><span>{getRank(progress.xp)}</span><span>{progress.xp} XP</span><button onClick={onOpenInstall}>Install to device</button></div></div></main>
 }
 
 function PausePanel({ onResume, onRestart }: { onResume: () => void; onRestart: () => void }) { return <div className="overlay"><section className="panel pause-panel" role="dialog" aria-modal="true"><div className="panel-icon">Ⅱ</div><div className="eyebrow">ADVENTURE PAUSED</div><h2>Take a little breather</h2><p>Zuno is waiting in Wonder Meadow.</p><button className="primary-button" onClick={onResume}>Resume exploring</button><button className="text-button" onClick={onRestart}>Restart progress</button><div className="controls-note"><b>Move</b> WASD / arrows <b>Jump</b> Space <b>Interact</b> E / Q</div></section></div> }

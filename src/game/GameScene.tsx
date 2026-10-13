@@ -4,11 +4,12 @@ import { Float, Sparkles, Sky } from '@react-three/drei'
 import { Group, Mesh } from 'three'
 import Player from './Player'
 import StarCollectible from './StarCollectible'
+import type { ZunoCustomization } from '../utils/save'
 
-type Props = { paused: boolean; onCollectStar: () => void; onStartMath: () => void; onStartAI: () => void }
+type Props = { paused: boolean; zuno: ZunoCustomization; onCollectStar: () => void; onStartMath: () => void; onStartAI: () => void }
 type Position = [number, number, number]
 
-export default function GameScene({ paused, onCollectStar, onStartMath, onStartAI }: Props) {
+export default function GameScene({ paused, zuno, onCollectStar, onStartMath, onStartAI }: Props) {
   const playerRef = useRef<Group | null>(null)
   return <Canvas shadows dpr={[1, 1.5]} camera={{ position: [7, 5, 9], fov: 48 }} className="game-canvas">
     <color attach="background" args={['#8acde5']} /><fog attach="fog" args={['#8acde5', 20, 54]} />
@@ -18,7 +19,7 @@ export default function GameScene({ paused, onCollectStar, onStartMath, onStartA
       <MeadowTerrain />
       <DistantMountains />
       <IslandDecor />
-      <Player paused={paused} playerRef={playerRef} onStartMath={onStartMath} onStartAI={onStartAI} />
+      <Player paused={paused} zuno={zuno} playerRef={playerRef} onStartMath={onStartMath} onStartAI={onStartAI} />
       <StarCollectible position={[2, 0.9, -2]} playerRef={playerRef} onCollect={onCollectStar} />
       <StarCollectible position={[-4, 0.8, -6]} playerRef={playerRef} onCollect={onCollectStar} />
       <StarCollectible position={[5, 0.75, -7]} playerRef={playerRef} onCollect={onCollectStar} />
