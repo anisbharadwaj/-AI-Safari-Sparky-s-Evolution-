@@ -9,6 +9,6 @@ export default function HUD({ progress, paused, onTogglePause, onOpenMap }: Prop
     <div className="xp-row"><span>Experience</span><span>{progress.xp} XP</span></div>
     <div className="progress-track"><i style={{ width: `${levelProgress}%` }} /></div>
     <div className="quest-line"><span>Active mission</span><b>{progress.aiMissionComplete ? 'First model · Complete' : 'Teach Zuno to see patterns'}</b></div>
-    <div className="hud-actions"><button className="text-button" onClick={onOpenMap}>World map</button><button className="text-button" onClick={onTogglePause}>{paused ? 'Resume' : 'Pause'}</button></div>
+    <div className="interaction-note"><span>Interact</span><b>E</b> Number Grove <b>Q</b> AI Academy</div><div className="hud-actions"><button className="text-button" onClick={onOpenMap}>World map</button><button className="text-button" onClick={onTogglePause}>{paused ? 'Resume' : 'Pause'}</button></div>
   </aside>
 }
