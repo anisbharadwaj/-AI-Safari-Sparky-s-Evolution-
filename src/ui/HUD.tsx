@@ -1,11 +1,5 @@
-import React from 'react'
+import type { Progress } from '../utils/save'
 
-export default function HUD({progress, onTogglePause}:{progress:any, onTogglePause:()=>void}){
-  return (
-    <div className="hud">
-      <div>Wonder Stars: {progress.stars}</div>
-      <div>Quests: {progress.questsCompleted}</div>
-      <button onClick={onTogglePause} aria-label="Pause">Pause</button>
-    </div>
-  )
+export default function HUD({ progress, paused, onTogglePause }: { progress: Progress; paused: boolean; onTogglePause: () => void }) {
+  return <aside className="hud" aria-label="Adventure progress"><div className="eyebrow">WONDER MEADOW</div><div className="hud-row"><span>Wonder Stars</span><span className="hud-stars">✦ {progress.stars}</span></div><div className="quest-line"><span>Current quest</span><b>{progress.questsCompleted ? 'Restore the Wonder Core · Complete' : 'Restore the Wonder Core'}</b></div><button className="text-button" onClick={onTogglePause}>{paused ? 'Resume adventure' : 'Pause adventure'}</button></aside>
 }
