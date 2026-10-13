@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react'
 import { useFrame } from '@react-three/fiber'
 
 export default function StarCollectible({position=[0,1,0], onCollect}:{position?:[number,number,number], onCollect:()=>void}){
-  const ref = useRef<any>()
+  const ref = useRef<any>(null)
   const [collected, setCollected] = useState(false)
 
   useFrame((state,delta)=>{
